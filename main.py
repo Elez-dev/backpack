@@ -37,7 +37,7 @@ def follow(driver):
     time.sleep(1)
     password = 'qwerqwer'
     driver.get('chrome-extension://aflkmfhebedbjioipglgcbcmnbpgliof/options.html?onboarding=true')
-    time.sleep(4)
+    time.sleep(5)
     driver.find_element(by=By.NAME, value="inviteCode").send_keys(invite_code)
     driver.find_element(by=By.XPATH, value="//*[text() = 'Go']").click()
     time.sleep(1)
@@ -84,7 +84,7 @@ def follow(driver):
 
 def main():
     while True:
-        driver = webdriver.Chrome(options=option)
+        driver = webdriver.Chrome(executable_path='chromedriver.exe', options=option)
         try:
             follow(driver)
         except Exception:
