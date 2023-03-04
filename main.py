@@ -1,19 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from fake_useragent import UserAgent
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 import time
 import threading
 import random
 import string
 
-# option
-option = webdriver.ChromeOptions()
-option.add_extension("jopa.crx")
-option.add_argument(f'--user-agent={UserAgent().random}')
-option.add_argument('--disable-gpu')
-option.page_load_strategy = 'eager'
-option.add_experimental_option('prefs', {'intl.accept_languages': 'en,en_US'})
-option.add_argument("--disable-blink-features=AutomationControlled")
+# path to .crx
+EXT_PATH = r"\jopa.crx"
 
 # ref code
 ref_code = 'https://backpack.app/ref/elezdev'
@@ -22,7 +18,16 @@ ref_code = 'https://backpack.app/ref/elezdev'
 invite_code = "a6a99b56-3428-419b-9516-29db82897a8a"
 
 # number of threads
-number_of_threads = 5
+number_of_threads = 1
+
+# option
+option = webdriver.ChromeOptions()
+option.add_extension(EXT_PATH)
+option.add_argument(f'--user-agent={UserAgent().random}')
+option.add_argument('--disable-gpu')
+option.page_load_strategy = 'eager'
+option.add_experimental_option('prefs', {'intl.accept_languages': 'en,en_US'})
+option.add_argument("--disable-blink-features=AutomationControlled")
 
 lock = threading.Lock()
 
@@ -56,7 +61,7 @@ def follow(driver):
         name += driver.find_element(by=By.ID, value=f":r{i}:").get_attribute('value')
         name += ' '
     lock.acquire()
-    with open('seed.txt','a') as f:
+    with open('seed.txt', 'a') as f:
         f.write(name + '\n')
     lock.release()
     driver.find_element(by=By.XPATH, value="//*[text() = 'I saved my secret recovery phrase']").click()
@@ -84,11 +89,11 @@ def follow(driver):
 
 def main():
     while True:
-        driver = webdriver.Chrome(executable_path='chromedriver.exe', options=option)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=option)
         try:
             follow(driver)
         except Exception:
-            print(f'Ошибка ')
+            print('Ошибка ')
         finally:
             driver.close()
             driver.quit()
